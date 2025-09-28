@@ -95,12 +95,11 @@ public class Decode
             start = expandedPlain.length;
         }
 
-        byte[] afterDict = Arrays.copyOfRange(expandedPlain, start, expandedPlain.length);
-
         ByteArrayOutputStream recovered = new ByteArrayOutputStream();
-        for (int i = 0; i < afterDict.length; i += BLOCK_SIZE)
+
+        for (int i = start; i < expandedPlain.length; i += BLOCK_SIZE)
         {
-            recovered.write(afterDict[i]);
+            recovered.write(expandedPlain[i]);
         }
 
         return recovered;
