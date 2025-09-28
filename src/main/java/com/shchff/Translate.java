@@ -12,15 +12,18 @@ import static com.shchff.Utils.readBlocksFromFile;
 
 public class Translate
 {
-    public static void translate(String input, String mapping) throws IOException
+    public static void translate(String input, String output) throws IOException
     {
-        List<byte[]> blocks = readBlocksFromFile(input);
+        List<byte[]> blocks;
+
+        blocks = readBlocksFromFile(input);
+
         if (blocks.size() < DICT_SIZE)
         {
             throw new IllegalArgumentException("Размер зашифрованного файла слишком мал для наличия словаря в нём");
         }
 
-        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(mapping)))
+        try (BufferedWriter bw = Files.newBufferedWriter(Path.of(output)))
         {
             for (int i = 0; i < DICT_SIZE; i++)
             {
@@ -28,7 +31,11 @@ public class Translate
                 bw.write(hex + ";" + i + "\n");
             }
         }
+        catch (IOException e)
+        {
+            throw new IOException(String.format("Ошибка в записи в файл %s", output), e);
+        }
 
-        System.out.printf("Таблица сохранена %s%n", mapping);
+        System.out.printf("Таблица сохранена %s%n", output);
     }
 }

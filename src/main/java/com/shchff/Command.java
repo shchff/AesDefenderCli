@@ -28,6 +28,6 @@ public enum Command
                 .filter(c -> c.commandName.equals(commandName))
                 .findAny();
 
-        return command.orElseThrow(() -> new RuntimeException("No such command"));
+        return command.orElseThrow(() -> new IllegalArgumentException("Такой команды нет"));
     }
 }

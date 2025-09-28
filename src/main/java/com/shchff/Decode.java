@@ -29,32 +29,39 @@ public class Decode
                 String[] parts = line.split(";");
                 map.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
             }
+        }
+        catch (IOException e)
+        {
+            throw new IOException(String.format("Ошибка в чтении файла %s", input), e);
+        }
 
-            List<byte[]> blocks = readBlocksFromFile(input);
-            List<byte[]> expandedPlainBlocks = new ArrayList<>();
-            int unknown = 0;
+        List<byte[]> blocks = readBlocksFromFile(input);
+        List<byte[]> expandedPlainBlocks = new ArrayList<>();
+        int unknown = 0;
 
-            for (byte[] cblock : blocks)
+        for (byte[] cblock : blocks)
+        {
+            String key = bytesToHex(cblock);
+            if (map.containsKey(key))
             {
-                String key = bytesToHex(cblock);
-                if (map.containsKey(key))
-                {
-                    int val = map.get(key);
-                    byte[] pblock = new byte[BLOCK_SIZE];
-                    pblock[0] = (byte) val;
-                    expandedPlainBlocks.add(pblock);
-                }
-                else
-                {
-                    unknown++;
-                    expandedPlainBlocks.add(new byte[BLOCK_SIZE]);
-                }
+                int val = map.get(key);
+                byte[] pblock = new byte[BLOCK_SIZE];
+                pblock[0] = (byte) val;
+                expandedPlainBlocks.add(pblock);
             }
-            if (unknown > 0)
+            else
             {
-                System.out.printf("Предупреждение: %d блоков не могут быть расшифрованы%n", unknown);
+                unknown++;
+                expandedPlainBlocks.add(new byte[BLOCK_SIZE]);
             }
+        }
+        if (unknown > 0)
+        {
+            System.out.printf("Предупреждение: %d блоков не могут быть расшифрованы%n", unknown);
+        }
 
+        try
+        {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             for (byte[] b : expandedPlainBlocks)
             {
@@ -62,8 +69,13 @@ public class Decode
             }
             ByteArrayOutputStream recovered = getRecovered(bos);
             Files.write(Path.of(output), recovered.toByteArray());
-            System.out.printf("Декодированный файл %s сохранён%n", output);
         }
+        catch (IOException e)
+        {
+            throw new IOException(String.format("Ошибка в записи в файл %s", output), e);
+        }
+
+        System.out.printf("Декодированный файл %s сохранён%n", output);
     }
 
     private static ByteArrayOutputStream getRecovered(ByteArrayOutputStream bos)
