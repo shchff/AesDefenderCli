@@ -25,14 +25,8 @@ public class Utils
 
     public static List<byte[]> readBlocksFromFile(String input) throws IOException
     {
-        byte[] data = null;
-        try
-        {
-            data = Files.readAllBytes(Path.of(input));
-        } catch (IOException e)
-        {
-            throw new IOException(String.format("Ошибка в чтении файла %s", input), e);
-        }
+        byte[] data = readFileToByteArray(input);
+
         if (data.length % BLOCK_SIZE != 0)
         {
             throw new IllegalArgumentException(

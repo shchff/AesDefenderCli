@@ -16,26 +16,9 @@ public class Decode
 {
     public static void decode(String input, String mapping, String output) throws IOException
     {
-        Map<String, Integer> map = new HashMap<>();
-        try (BufferedReader reader = Files.newBufferedReader(Path.of(mapping)))
-        {
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                if (line.trim().isEmpty())
-                {
-                    continue;
-                }
-                String[] parts = line.split(";");
-                map.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
-            }
-        }
-        catch (IOException e)
-        {
-            throw new IOException(String.format("Ошибка в чтении файла %s", input), e);
-        }
-
+        Map<String, Integer> map = loadMap(mapping);
         List<byte[]> blocks = readBlocksFromFile(input);
+
         List<byte[]> expandedPlainBlocks = new ArrayList<>();
         int unknown = 0;
 
@@ -57,7 +40,7 @@ public class Decode
         }
         if (unknown > 0)
         {
-            System.out.printf("Предупреждение: %d блоков не могут быть расшифрованы%n", unknown);
+            System.out.printf("Предупреждение: %d блоков не получилось расшифровать%n", unknown);
         }
 
         try
@@ -78,6 +61,30 @@ public class Decode
         System.out.printf("Декодированный файл %s сохранён%n", output);
     }
 
+    private static Map<String, Integer> loadMap(String mapping) throws IOException
+    {
+        Map<String, Integer> map = new HashMap<>();
+        try (BufferedReader reader = Files.newBufferedReader(Path.of(mapping)))
+        {
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                if (line.trim().isEmpty())
+                {
+                    continue;
+                }
+                String[] parts = line.split(";");
+                map.put(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+            }
+        }
+        catch (IOException e)
+        {
+            throw new IOException(String.format("Ошибка в чтении файла %s", mapping), e);
+        }
+
+        return map;
+    }
+
     private static ByteArrayOutputStream getRecovered(ByteArrayOutputStream bos)
     {
         byte[] expandedPlain = bos.toByteArray();
@@ -95,6 +102,7 @@ public class Decode
         {
             recovered.write(afterDict[i]);
         }
+
         return recovered;
     }
 }
