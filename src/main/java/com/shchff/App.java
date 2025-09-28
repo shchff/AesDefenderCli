@@ -17,6 +17,8 @@ public class App
     {
         if (args.length < 1)
         {
+            System.out.println();
+            printUsage();
             System.exit(1);
         }
 
@@ -29,6 +31,8 @@ public class App
         catch (IllegalArgumentException e)
         {
             System.out.println(e.getMessage());
+            System.out.println();
+            printUsage();
             System.exit(1);
         }
 
@@ -55,7 +59,18 @@ public class App
         catch (IOException | IllegalArgumentException e)
         {
             System.out.println(e.getMessage());
+            System.out.println();
+            printUsage();
         }
+    }
+
+    private static void printUsage() {
+        System.out.println("Использование: java -jar .\\target\\AesDefenderCli-1.0-SNAPSHOT.jar <command> [options]");
+        System.out.println("Команды:");
+        System.out.println(" prepare -i input -o output");
+        System.out.println(" encode -i input -o output [-k keyfile]");
+        System.out.println(" translate -i input -m mapping");
+        System.out.println(" decode -i input -m mapping -o output");
     }
 
     private static Map<String, String> parseArgs(String[] args)
@@ -65,13 +80,9 @@ public class App
         for (int i = 0; i < args.length; i++)
         {
             String key = args[i];
-            if (i + 1 < args.length && !args[i + 1].startsWith("-"))
+            if (i + 1 < args.length)
             {
                 map.put(key, args[++i]);
-            }
-            else
-            {
-                map.put(key, "true");
             }
         }
 
