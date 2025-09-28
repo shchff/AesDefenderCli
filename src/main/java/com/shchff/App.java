@@ -11,8 +11,6 @@ import static com.shchff.Translate.translate;
 
 public class App
 {
-    private static final int BLOCK_SIZE = 16;
-    private static final int DICT_SIZE = 256;
 
     public static void main( String[] args ) throws Exception
     {
