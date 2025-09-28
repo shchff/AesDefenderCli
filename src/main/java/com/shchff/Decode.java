@@ -39,15 +39,15 @@ public class Decode
         List<byte[]> expandedPlainBlocks = new ArrayList<>();
         int unknown = 0;
 
-        for (byte[] cblock : blocks)
+        for (byte[] cipheredBlock : blocks)
         {
-            String key = bytesToHex(cblock);
+            String key = bytesToHex(cipheredBlock);
             if (map.containsKey(key))
             {
                 int val = map.get(key);
-                byte[] pblock = new byte[BLOCK_SIZE];
-                pblock[0] = (byte) val;
-                expandedPlainBlocks.add(pblock);
+                byte[] plainBlock = new byte[BLOCK_SIZE];
+                plainBlock[0] = (byte) val;
+                expandedPlainBlocks.add(plainBlock);
             }
             else
             {
