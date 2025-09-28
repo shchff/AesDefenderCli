@@ -68,7 +68,7 @@ public class App
         System.out.println("Использование: java -jar .\\target\\AesDefenderCli-1.0-SNAPSHOT.jar <command> [options]");
         System.out.println("Команды:");
         System.out.println(" prepare -i input -o output");
-        System.out.println(" encode -i input -o output [-k keyfile]");
+        System.out.println(" encode -i input -o output");
         System.out.println(" translate -i input -m mapping");
         System.out.println(" decode -i input -m mapping -o output");
     }
