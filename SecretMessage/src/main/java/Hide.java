@@ -93,39 +93,47 @@ public class Hide {
                 para.removeRun(i);
             }
 
-            for (Seg s : newSegs) {
-                // Создаём один новый run для сегмента и копируем стиль
+            for (Seg s : newSegs)
+            {
                 XWPFRun newRun = para.createRun();
-                if (s.src != null) {
+                if (s.src != null)
+                {
                     copyRunFormattingBestEffort(s.src, newRun);
                 }
 
-                // Если есть текст — вставляем его, но с обработкой специальных символов
-                if (s.text != null && !s.text.isEmpty()) {
+                if (s.text != null && !s.text.isEmpty())
+                {
                     String text = s.text;
                     StringBuilder buf = new StringBuilder();
 
-                    for (int k = 0; k < text.length(); k++) {
+                    for (int k = 0; k < text.length(); k++)
+                    {
                         char c = text.charAt(k);
 
-                        // Игнорируем CR, обрабатываем LF как break
-                        if (c == '\r') {
+                        if (c == '\r')
+                        {
                             continue;
-                        } else if (c == '\n') {
-                            // сначала выплюнем накопленный буфер (если есть)
-                            if (!buf.isEmpty()) {
+                        }
+                        else if (c == '\n')
+                        {
+                            if (!buf.isEmpty())
+                            {
                                 newRun.setText(buf.toString()); // append
                                 buf.setLength(0);
                             }
-                            // добавим перенос внутри run (soft break)
                             newRun.addBreak();
-                        } else if (c == '\t') {
-                            if (!buf.isEmpty()) {
+                        }
+                        else if (c == '\t')
+                        {
+                            if (!buf.isEmpty())
+                            {
                                 newRun.setText(buf.toString());
                                 buf.setLength(0);
                             }
                             newRun.addTab();
-                        } else {
+                        }
+                        else
+                        {
                             buf.append(c);
                         }
                     }
@@ -135,8 +143,8 @@ public class Hide {
                     }
                 }
 
-                // Если сегмент помечен как окрашенный — выставляем цвет (весь run окрасится)
-                if (s.colored) {
+                if (s.colored)
+                {
                     String hex = String.format("%02x0000", intensity);
                     newRun.setColor(hex);
                 }
@@ -145,7 +153,8 @@ public class Hide {
             if (secretIndex >= secretLen) break;
         }
 
-        if (secretIndex < secretLen) {
+        if (secretIndex < secretLen)
+        {
             throw new IllegalArgumentException(
                     "Недостаточно подходящих символов в документе для сокрытия всего сообщения (встретилось "
                             + secretIndex + " из " + secretLen + ").");
@@ -177,7 +186,6 @@ public class Hide {
         }
     }
 
-    // Вспомогательные структуры
     private record CharPos(XWPFRun src, char ch) {}
 
     private record Seg(XWPFRun src, String text, boolean colored) { }
@@ -203,7 +211,8 @@ public class Hide {
         return charPositions;
     }
 
-    private static void copyRunFormattingBestEffort(XWPFRun src, XWPFRun dst) {
+    private static void copyRunFormattingBestEffort(XWPFRun src, XWPFRun dst)
+    {
         try
         {
             dst.setBold(src.isBold());
@@ -215,14 +224,14 @@ public class Hide {
             String color = src.getColor();
             if (color != null) dst.setColor(color);
 
-            if (src.getCTR() != null && src.getCTR().getRPr() != null) {
-                // copy low-level run properties
+            if (src.getCTR() != null && src.getCTR().getRPr() != null)
+            {
                 dst.getCTR().setRPr((CTRPr) src.getCTR().getRPr().copy());
             }
         }
         catch (Throwable ignored)
         {
-            // best-effort: если какая-то часть форматирования не копируется — не страшно
+
         }
     }
 
