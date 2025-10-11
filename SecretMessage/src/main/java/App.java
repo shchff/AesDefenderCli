@@ -7,6 +7,7 @@ public class App
 {
     public static void main(String[] args)
     {
+
         if (args.length < 2)
         {
             printUsage();
@@ -34,7 +35,7 @@ public class App
             switch (command)
             {
                 case HIDE:
-                    Hide.hide(opts.get("-i"), opts.get("-s"));
+                    Hide.hide(opts.get("-i"), opts.get("-s"), opts.getOrDefault("-d", "1"));
                     break;
                 case EXTRACT:
                     Extract.extract(opts.get("-i"));
@@ -54,7 +55,7 @@ public class App
     {
         System.out.println("Использование: java -jar .\\target\\SecretMessage-1.0.jar <command> [options]");
         System.out.println("Команды:");
-        System.out.println(" hide -i <input.docx> -s <secret.txt>");
+        System.out.println(" hide -i <input.docx> -s <secret.txt> -d <depth>");
         System.out.println(" extract -i <input.docx>");
     }
 
