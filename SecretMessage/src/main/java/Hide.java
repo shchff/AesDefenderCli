@@ -25,6 +25,10 @@ public class Hide {
         {
             doc = new XWPFDocument(in);
         }
+        catch (IllegalArgumentException e)
+        {
+            throw new IOException("Проблема с файлом word, возможно он пуст", e);
+        }
 
         int secretIndex = 0;
         final int secretLen = secret.length();
@@ -118,7 +122,7 @@ public class Hide {
                         {
                             if (!buf.isEmpty())
                             {
-                                newRun.setText(buf.toString()); // append
+                                newRun.setText(buf.toString());
                                 buf.setLength(0);
                             }
                             newRun.addBreak();
@@ -156,8 +160,7 @@ public class Hide {
         if (secretIndex < secretLen)
         {
             throw new IllegalArgumentException(
-                    "Недостаточно подходящих символов в документе для сокрытия всего сообщения (встретилось "
-                            + secretIndex + " из " + secretLen + ").");
+                    "Недостаточно подходящих символов в документе для сокрытия всего сообщения.");
         }
 
         saveResult(inputPath, doc);
@@ -165,16 +168,26 @@ public class Hide {
         System.out.println("Сообщение успешно скрыто (окрашено " + secretLen + " символов).");
     }
 
-    private static void checkParams(String inputDocx, String secretTxt, String intensityStr) throws FileNotFoundException
+    private static void checkParams(String inputDocx, String secretTxt, String intensityStr) throws IOException
     {
+        Path path = Path.of(secretTxt);
+        if (!Files.exists(path))
+        {
+            throw new FileNotFoundException("Файл " + secretTxt + " не найден");
+        }
+
+        String secret = Files.readString(path).trim();
+
+        if (secret.isEmpty())
+        {
+            throw new IllegalArgumentException("Секрет пустой");
+        }
+
         if (!Files.exists(Path.of(inputDocx)))
         {
             throw new FileNotFoundException("Файл " + inputDocx + " не найден");
         }
-        if (!Files.exists(Path.of(secretTxt)))
-        {
-            throw new FileNotFoundException("Файл " + secretTxt + " не найден");
-        }
+
         try
         {
             int v = Integer.parseInt(intensityStr);
