@@ -35,10 +35,10 @@ public class App
             switch (command)
             {
                 case HIDE:
-                    Hide.hide(opts.get("-i"), opts.get("-s"), opts.getOrDefault("-d", "1"));
+                    Hide.hide(opts.get("-d"), opts.get("-s"), opts.getOrDefault("-i", "1"));
                     break;
                 case EXTRACT:
-                    Extract.extract(opts.get("-i"));
+                    Extract.extract(opts.get("-d"));
                     break;
             }
         }
@@ -55,8 +55,8 @@ public class App
     {
         System.out.println("Использование: java -jar .\\target\\SecretMessage-1.0.jar <command> [options]");
         System.out.println("Команды:");
-        System.out.println(" hide -i <input.docx> -s <secret.txt> -d <depth>");
-        System.out.println(" extract -i <input.docx>");
+        System.out.println(" hide -d <file.docx> -s <secret.txt> -i <intensity>");
+        System.out.println(" extract -d <file.docx>");
     }
 
     private static Map<String, String> parseArgs(String[] args)
