@@ -4,3 +4,4 @@
 
 Ветки:
 - 1-aes-ecb
+- 2-steganography
